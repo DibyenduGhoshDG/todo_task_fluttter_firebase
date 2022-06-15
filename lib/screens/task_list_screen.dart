@@ -1,5 +1,3 @@
-import 'dart:collection';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -9,8 +7,6 @@ import 'package:todo_task_fluttter_firebase/model/add_task_model.dart';
 import 'package:todo_task_fluttter_firebase/screens/add_task.dart';
 import 'package:todo_task_fluttter_firebase/services/sharePreference_instance.dart';
 import 'package:todo_task_fluttter_firebase/services/userService.dart';
-import 'package:todo_task_fluttter_firebase/sizeConfig.dart';
-import 'package:todo_task_fluttter_firebase/validateService.dart';
 
 class TaskListScreen extends StatefulWidget {
   @override
@@ -18,18 +14,13 @@ class TaskListScreen extends StatefulWidget {
 }
 
 class _TaskListScreenState extends State<TaskListScreen> {
-  HashMap userValues = HashMap<String, String>();
-  Map customWidth = Map<String, double>();
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   double borderWidth = 2.0;
-
-  // ValidateService _validateService = ValidateService();
   late UserService _userService = UserService();
   var isLoading = false;
 
   @override
   Widget build(BuildContext context) {
-    SizeConfig().init(context);
     return Scaffold(
       key: scaffoldKey,
       backgroundColor: Colors.white,

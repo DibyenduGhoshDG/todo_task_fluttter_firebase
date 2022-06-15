@@ -2,7 +2,9 @@ class AddTaskModel {
   String? taskName;
   String? taskDescription;
   String? taskDateTime;
+
   AddTaskModel() {}
+
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = Map<String, dynamic>();
     data['taskName'] = taskName;

@@ -38,20 +38,13 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  firebase: ^8.0.0
-  # firebase_auth: ^0.18.4+1
-  cloud_firestore: ^0.14.4
-  # firebase_storage: ^5.2.0
-  # flutter_secure_storage: ^3.3.3
-  # connectivity: ^3.0.3
-  # jwt_decode: ^0.3.1
-  get: ^4.1.4
-  # flutter_spinkit: ^4.1.2+1
-  shared_preferences: ^0.5.8
-  google_sign_in: 
+  firebase_core: ^1.17.1
+  cloud_firestore: ^3.1.17
+  get: 
+  shared_preferences: ^2.0.15
+  google_sign_in: ^5.3.3
   flutter_screenutil: 5.0.0-nullsafety.11
   percent_indicator: ^4.2.2
-  # connectivity: ^3.0.3
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is

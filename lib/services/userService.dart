@@ -81,6 +81,31 @@ class UserService {
     }
   }
 
+  Future<void> updateItem(
+      {required AddTaskModel addTaskModel, required String docId}) async {
+    await _firestore
+        .collection(taskListCollection)
+        .doc('${getUserId()}')
+        .collection('${getUserId()}')
+        .doc(docId)
+        .update(addTaskModel.toJson())
+        .whenComplete(() => print("Task updated in the database"))
+        .catchError((e) => print(e));
+  }
+
+  Future<void> deleteTask(docId) async {
+    try {
+      await _firestore
+          .collection(taskListCollection)
+          .doc(docId)
+          .delete()
+          .whenComplete(() => print('Task deleted from the database'))
+          .catchError((e) => print(e));
+    } catch (e) {
+      print(e.toString());
+    }
+  }
+
   Future<void> logOut(context) async {
     GoogleSignIn googleSignIn = GoogleSignIn(
       scopes: [

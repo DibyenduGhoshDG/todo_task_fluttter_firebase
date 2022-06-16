@@ -16,7 +16,7 @@ class TaskListScreen extends StatefulWidget {
 class _TaskListScreenState extends State<TaskListScreen> {
   final GlobalKey<ScaffoldState> scaffoldKey = GlobalKey();
   double borderWidth = 2.0;
-  late UserService _userService = UserService();
+  final UserService _userService = UserService();
   var isLoading = false;
 
   @override
@@ -32,7 +32,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
               onTap: () async {
                 await _userService.logOut(context);
               },
-              child: Text('Log Out'))
+              child: const Text('Log Out'))
         ],
       )),
       floatingActionButton: FloatingActionButton(
@@ -62,60 +62,12 @@ class _TaskListScreenState extends State<TaskListScreen> {
     );
   }
 
-  List tempList = [
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-    {
-      'name': 'Dibyendu',
-      'time': 'Dibyendu',
-      'address': 'Dibyendu',
-    },
-  ];
-
   Widget buildBodyPart() {
     return Padding(
       padding: const EdgeInsets.only(
-        top: 15,
-        left: 20,
-        right: 20,
+        top: 10,
+        left: 15,
+        right: 10,
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -140,11 +92,11 @@ class _TaskListScreenState extends State<TaskListScreen> {
                   .snapshots(),
               builder: (BuildContext context, snapshot) {
                 if (snapshot.hasError) {
-                  return Text('Oops! facing error');
+                  return const Text('Oops! facing error');
                 }
                 if (snapshot.hasData) {
                   var doc = snapshot.data!.docs;
-                  if (doc != null && doc.length >= 1) {
+                  if (doc.isNotEmpty) {
                     // print(doc.first.data());
                     return ListView.separated(
                       shrinkWrap: true,
@@ -174,7 +126,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                   mainAxisSize: MainAxisSize.min,
                                   children: [
                                     SizedBox(
-                                      width: 0.6.sw,
+                                      width: 0.5.sw,
                                       child: Text(
                                         taskModel.taskName.toString(),
                                         style: TextStyle(
@@ -184,7 +136,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                       ),
                                     ),
                                     SizedBox(
-                                      width: 0.6.sw,
+                                      width: 0.5.sw,
                                       child: Text(
                                         taskModel.taskDescription.toString(),
                                         overflow: TextOverflow.ellipsis,
@@ -201,14 +153,19 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                 ),
                               ],
                             ),
-                            Text(
-                              taskModel.taskDateTime
-                                  .toString()
-                                  .substring(11, 16),
-                              style: TextStyle(
-                                  fontSize: 0.04.sw,
-                                  fontWeight: FontWeight.w400,
-                                  color: Colors.black.withOpacity(0.5)),
+                            Row(
+                              children: [
+                                Text(
+                                  taskModel.taskDateTime
+                                      .toString()
+                                      .substring(11, 16),
+                                  style: TextStyle(
+                                      fontSize: 0.04.sw,
+                                      fontWeight: FontWeight.w400,
+                                      color: Colors.black.withOpacity(0.5)),
+                                ),
+                                getPopupMenuButton(taskModel, doc[index].id),
+                              ],
                             ),
                           ],
                         );
@@ -218,8 +175,8 @@ class _TaskListScreenState extends State<TaskListScreen> {
                       },
                     );
                   } else {
-                    return Center(
-                        child: Text('You Have No Task, Please your task'));
+                    return const Center(
+                        child: Text('You Have No Task, Please add your task'));
                   }
                 } else {
                   return const Center(
@@ -231,6 +188,32 @@ class _TaskListScreenState extends State<TaskListScreen> {
               }),
         ],
       ),
+    );
+  }
+
+  Widget getPopupMenuButton(taskModel, docId) {
+    List popUpItemList = ['Edit', 'Delete'];
+    return PopupMenuButton(
+      initialValue: 2,
+      icon: const Icon(Icons.more_vert),
+      itemBuilder: (context) {
+        return List.generate(2, (index) {
+          return PopupMenuItem(
+            value: index,
+            child: Text(popUpItemList[index]),
+          );
+        });
+      },
+      onSelected: (selectedValue) async {
+        if (selectedValue == 0) {
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (ctx) =>
+                      AddTask(addTaskModel: taskModel, docId: docId)));
+         
+        } else {}
+      },
     );
   }
 

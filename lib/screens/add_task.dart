@@ -1,13 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/src/foundation/key.dart';
-import 'package:flutter/src/widgets/framework.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task_fluttter_firebase/model/add_task_model.dart';
 import 'package:todo_task_fluttter_firebase/services/userService.dart';
 import 'package:todo_task_fluttter_firebase/widget/primary_button.dart';
 
 class AddTask extends StatefulWidget {
-  const AddTask({Key? key}) : super(key: key);
+  AddTaskModel? addTaskModel;
+  String? docId;
+  AddTask({Key? key, this.addTaskModel, this.docId}) : super(key: key);
 
   @override
   State<AddTask> createState() => _AddTaskState();
@@ -17,11 +17,20 @@ class _AddTaskState extends State<AddTask> {
   AddTaskModel addTaskModel = AddTaskModel();
   var isLoading = false;
   UserService userService = UserService();
+  TextEditingController dateController = TextEditingController();
+
+  @override
+  void initState() {
+    // if(addTaskModel != null){
+
+    // }
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFF2A5798),
+      backgroundColor: const Color(0xFF2A5798),
       appBar: AppBar(
         title: const Text('Add new Task'),
         centerTitle: true,
@@ -37,6 +46,7 @@ class _AddTaskState extends State<AddTask> {
               height: 50,
             ),
             TextFormField(
+              initialValue: widget.addTaskModel?.taskName ?? '',
               onChanged: (value) {
                 addTaskModel.taskName = value;
               },
@@ -49,6 +59,7 @@ class _AddTaskState extends State<AddTask> {
               height: 20,
             ),
             TextFormField(
+              initialValue: widget.addTaskModel?.taskDescription ?? '',
               onChanged: (value) {
                 addTaskModel.taskDescription = value;
               },
@@ -60,11 +71,33 @@ class _AddTaskState extends State<AddTask> {
             const SizedBox(
               height: 20,
             ),
+            TextFormField(
+              initialValue: widget.addTaskModel?.taskDescription ?? '',
+              controller: dateController,
+              // onChanged: (value) {
+              //   addTaskModel.taskDescription = value;
+              // },
+              onTap: () {
+                // addTaskModel.taskDescription = value;
+                // DateTime.s
+              },
+              style: TextStyle(fontSize: 0.05.sw, color: Colors.white),
+              decoration: _inputDecoration(
+                hintText: 'Task Date',
+              ),
+            ),
+            const SizedBox(
+              height: 20,
+            ),
             !isLoading
                 ? PrimaryButton(
                     color: Colors.cyan,
                     onPressed: () async {
-                      await addTaskToFirebase();
+                      if (widget.docId == null) {
+                        await addTaskToFirebase();
+                      } else {
+                        await updateTaskToFirebase();
+                      }
                     },
                     text: 'Add Task',
                   )
@@ -82,6 +115,18 @@ class _AddTaskState extends State<AddTask> {
     addTaskModel.taskDateTime = DateTime.now().toString();
     await userService.addNewTask(addTaskModel);
 
+    setState(() {
+      isLoading = false;
+    });
+    Navigator.pop(context);
+  }
+
+  Future<void> updateTaskToFirebase() async {
+    setState(() {
+      isLoading = true;
+    });
+    await userService.updateItem(
+        addTaskModel: addTaskModel, docId: widget.docId!);
     setState(() {
       isLoading = false;
     });

@@ -93,10 +93,12 @@ class UserService {
         .catchError((e) => print(e));
   }
 
-  Future<void> deleteTask(docId) async {
+  Future<void> deleteTask({required String docId}) async {
     try {
       await _firestore
           .collection(taskListCollection)
+          .doc('${getUserId()}')
+          .collection('${getUserId()}')
           .doc(docId)
           .delete()
           .whenComplete(() => print('Task deleted from the database'))

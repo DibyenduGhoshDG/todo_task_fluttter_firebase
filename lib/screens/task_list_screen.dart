@@ -158,7 +158,7 @@ class _TaskListScreenState extends State<TaskListScreen> {
                                 Text(
                                   taskModel.taskDateTime
                                       .toString()
-                                      .substring(11, 16),
+                                      .substring(0, 5),
                                   style: TextStyle(
                                       fontSize: 0.04.sw,
                                       fontWeight: FontWeight.w400,
@@ -211,8 +211,9 @@ class _TaskListScreenState extends State<TaskListScreen> {
               MaterialPageRoute(
                   builder: (ctx) =>
                       AddTask(addTaskModel: taskModel, docId: docId)));
-         
-        } else {}
+        } else {
+          _userService.deleteTask(docId: docId);
+        }
       },
     );
   }

@@ -3,6 +3,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:todo_task_fluttter_firebase/model/add_task_model.dart';
 import 'package:todo_task_fluttter_firebase/services/userService.dart';
 import 'package:todo_task_fluttter_firebase/widget/primary_button.dart';
+import 'package:intl/intl.dart';
 
 class AddTask extends StatefulWidget {
   AddTaskModel? addTaskModel;
@@ -21,9 +22,11 @@ class _AddTaskState extends State<AddTask> {
 
   @override
   void initState() {
-    // if(addTaskModel != null){
-
-    // }
+    if (widget.addTaskModel != null) {
+      dateController.text = widget.addTaskModel!.taskDateTime!;
+      addTaskModel.taskName = widget.addTaskModel!.taskName!;
+      addTaskModel.taskDescription = widget.addTaskModel!.taskDescription!;
+    }
     super.initState();
   }
 
@@ -72,14 +75,33 @@ class _AddTaskState extends State<AddTask> {
               height: 20,
             ),
             TextFormField(
-              initialValue: widget.addTaskModel?.taskDescription ?? '',
               controller: dateController,
-              // onChanged: (value) {
-              //   addTaskModel.taskDescription = value;
-              // },
+              readOnly: true,
               onTap: () {
-                // addTaskModel.taskDescription = value;
-                // DateTime.s
+                var datePart = dateController.text.split(' ');
+                var dateFormat = datePart[0].split('-');
+                DateTime selectedDate = dateController.text == ''
+                    ? DateTime.now()
+                    : DateTime(
+                        int.parse(dateFormat[2]),
+                        int.parse(dateFormat[1]),
+                        int.parse(dateFormat[0]),
+                      );
+                showDatePicker(
+                  context: context,
+                  initialDate: selectedDate,
+                  firstDate: DateTime(2000),
+                  lastDate: DateTime(2025),
+                ).then((value) {
+                  if (value != null) {
+                    dateController.text =
+                        DateFormat('dd-MM-yyyy').format(value);
+                  }
+                  //  else {
+                  //   dateController.text = widget.addTaskModel!.taskDateTime!;
+                  // }
+                  print(dateController.text);
+                });
               },
               style: TextStyle(fontSize: 0.05.sw, color: Colors.white),
               decoration: _inputDecoration(
@@ -99,7 +121,7 @@ class _AddTaskState extends State<AddTask> {
                         await updateTaskToFirebase();
                       }
                     },
-                    text: 'Add Task',
+                    text: widget.docId == null ? 'Add Task' : 'Update Task',
                   )
                 : const CircularProgressIndicator(),
           ],
@@ -112,7 +134,7 @@ class _AddTaskState extends State<AddTask> {
     setState(() {
       isLoading = true;
     });
-    addTaskModel.taskDateTime = DateTime.now().toString();
+    addTaskModel.taskDateTime = dateController.text;
     await userService.addNewTask(addTaskModel);
 
     setState(() {
@@ -125,6 +147,7 @@ class _AddTaskState extends State<AddTask> {
     setState(() {
       isLoading = true;
     });
+    addTaskModel.taskDateTime = dateController.text;
     await userService.updateItem(
         addTaskModel: addTaskModel, docId: widget.docId!);
     setState(() {
